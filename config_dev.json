@@ -1,0 +1,12 @@
+{ 
+    "API_KEY": "123", 
+    "DB_ENGINE": "postgresql+psycopg2",
+    "DB_USER": "postgres",
+    "DB_PASS": "postgres",
+    "DB_HOST": "localhost",
+    "DB_PORT": "5432",
+    "DB_NAME": "arcadeiadb",
+    "ENABLE_SWAGGER_UI": "True",
+    "ENABLE_SERVE_SPEC": "True",
+    "DB_LIVE": "0"
+}

@@ -1,0 +1,184 @@
+openapi: 3.0.0
+info:
+  title: "Arcadeia Database"
+  description: "Database for the Arcadeia gaming community"
+  version: "1.0.0"
+servers:
+  - url: "/api"
+security:
+  - api_key: []
+
+components:
+  securitySchemes:
+    api_key:      
+      type: apiKey
+      name: apikey  
+      in: header       
+      x-apikeyInfoFunc: security.apikey_auth
+  schemas:
+    User:
+      type: "object"
+      required:
+        - user_id
+      properties:
+        user_id:
+          type: "string"      
+        name:
+          type: "string"
+        introduction_message_id:
+          type: "integer"
+        introduction_completed:
+          type: "integer"
+        birthday:
+          type: "string"
+    TicketOperation:
+      type: "object"
+      required:
+        - operation
+        - ticket_value
+      properties:
+        operation:
+          type: "string"
+        ticket_value:
+          type: "integer"
+  parameters:
+    user_id:
+      name: "user_id"
+      description: "Discord User ID of a user (Right click > 'Copy User ID' in Discord to get this value. May need developer mode enabled in settings.)"
+      in: path
+      required: True
+      schema:
+        type: "string"
+
+paths:
+  /users:
+    get:
+      operationId: "users.get_users"
+      tags:
+        - "Users"
+      summary: "Get a list of all users"
+      responses:
+        "200":
+          description: "Successfully read user list"
+        "401":
+          description: "Unauthorized"
+    put:
+      operationId: "users.new_user"
+      tags:
+        - "Users"
+      summary: "Creates a new user"
+      requestBody:
+          description: "New user information"
+          required: True
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: "Successfully created user"
+        "401":
+          description: "Unauthorized"
+  /users/birthdays:
+    get:
+      operationId: "users.get_birthdays"
+      tags:
+        - "Users"
+      summary: "Get a list of users with birthdays today"
+      responses:
+        "200":
+          description: "Successfully read user birthdays"
+        "401":
+          description: "Unauthorized"
+  /users/{user_id}:
+    get:
+      operationId: "users.get_user"
+      tags:
+        - "Users"
+      summary: "Get an individual user"
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "200":
+          description: "Successfully read user data"
+        "401":
+          description: "Unauthorized"
+    delete:
+      operationId: "users.delete_user"
+      tags:
+        - "Users"
+      summary: "Deletes a user"
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "200":
+          description: "Successfully deleted user"
+        "401":
+          description: "Unauthorized"
+    put:
+      operationId: "users.update_user"
+      tags:
+        - "Users"
+      summary: "Updates a user"
+      parameters:
+        - $ref: "#/components/parameters/user_id"      
+      requestBody:
+          description: "User information to replace existing"
+          required: True
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: "Successfully created user"
+        "401":
+          description: "Unauthorized"
+
+  /users/{user_id}/tickets:
+    patch:
+      operationId: "users.update_tickets"
+      tags:
+        - "Users"
+      summary: "Modifies a user's tickets based on the passed values"
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      requestBody:
+          description: "Ticket operation information"
+          required: True
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketOperation"
+                example: "{operation: 'add', ticket_value: 5}"
+      responses:
+        "200":
+          description: "Successfully updated tickets"
+        "401":
+          description: "Unauthorized"
+    get:
+      operationId: "users.get_tickets"
+      tags:
+        - "Users"
+      summary: "Retrieve a user's ticket count"
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "200":
+          description: "Successfully updated tickets"
+        "401":
+          description: "Unauthorized"
+
+  /users/{user_id}/introduction:
+    get:
+      operationId: "users.get_introduction"
+      tags:
+        - "Users"
+      summary: "Retrieve a user's introduction message id"
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "200":
+          description: "Successfully retrieved introduction"
+        "401":
+          description: "Unauthorized"
